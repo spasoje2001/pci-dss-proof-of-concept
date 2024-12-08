@@ -1,28 +1,42 @@
 package main
 
 import (
-	"go-pci-dss/handlers"
-	"go-pci-dss/repositories"
-	"go-pci-dss/services"
 	"log"
 	"net/http"
+
+	"go-pci-dss/internal/database"
+	"go-pci-dss/internal/handlers"
+	"go-pci-dss/internal/services"
+
+	"github.com/gorilla/mux"
 )
 
 func main() {
-	// Kreiraj skladište
-	repo := repositories.NewCardRepository()
+	// 1. Povezivanje sa bazom podataka
+	db, err := database.Connect()
+	if err != nil {
+		log.Fatalf("Could not connect to the database: %v", err)
+	}
+	defer db.Close()
+	/*
+		if err := database.ExecuteMigration(db, "000001_create_cardholders_table.up.sql"); err != nil {
+			log.Fatalf("Migration failed: %v", err)
+		}*/
 
-	// Kreiraj servis
-	service := services.NewCardService(repo)
+	// 2. Kreiranje servisa
+	cardholderService := services.NewCardholderService(db)
 
-	// Kreiraj handler
-	handler := handlers.NewCardHandler(service)
+	// 3. Kreiranje router-a
+	r := mux.NewRouter()
 
-	// Postavi rute
-	http.HandleFunc("/card/save", handler.SaveCard)
-	http.HandleFunc("/card/get", handler.GetCard)
+	// 5. Definisanje ruta
+	r.HandleFunc("/cardholders", handlers.GetCardholdersHandler(cardholderService)).Methods("GET")
+	r.HandleFunc("/cardholders", handlers.CreateCardholderHandler(cardholderService)).Methods("POST")
 
-	// Pokreni server
-	log.Println("Server running on port 8080")
-	log.Fatal(http.ListenAndServe(":8080", nil))
+	// 6. Pokretanje servera
+	port := "8080"
+	log.Printf("Server is running on port %s", port)
+	if err := http.ListenAndServe(":"+port, r); err != nil {
+		log.Fatalf("Could not start server: %v", err)
+	}
 }
