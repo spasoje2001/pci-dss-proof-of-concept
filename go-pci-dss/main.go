@@ -13,6 +13,8 @@ import (
 )
 
 func main() {
+
+	middleware.InitLogger()
 	// 1. Povezivanje sa bazom podataka
 	db, err := database.Connect()
 	if err != nil {
@@ -30,7 +32,7 @@ func main() {
 	r := mux.NewRouter()
 
 	r.Handle("/cardholders", middleware.AdminRoleMiddleware(handlers.GetCardholdersHandler(cardholderService))).Methods("GET")
-	r.HandleFunc("/cardholders", handlers.CreateCardholderHandler(cardholderService)).Methods("POST")
+	r.Handle("/cardholders", middleware.UserRoleMiddleware(handlers.CreateCardholderHandler(cardholderService))).Methods("POST")
 
 	r.HandleFunc("/users", handlers.RegisterHandler(userService)).Methods("POST")
 	r.HandleFunc("/users/login", handlers.LoginHandler(userService)).Methods("POST")

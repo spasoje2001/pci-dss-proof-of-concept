@@ -2,50 +2,88 @@ package handlers
 
 import (
 	"encoding/json"
-	"log"
 	"net/http"
 
 	"go-pci-dss/internal/models"
 	"go-pci-dss/internal/services"
+
+	"github.com/sirupsen/logrus"
 )
 
 func RegisterHandler(s *services.UserService) http.HandlerFunc {
-	log.Printf("U handleru")
 	return func(w http.ResponseWriter, r *http.Request) {
+		// Logujemo dolazni zahtev
+		logrus.WithFields(logrus.Fields{
+			"method":   r.Method,
+			"endpoint": r.URL.Path,
+			"ip":       r.RemoteAddr,
+		}).Info("Received registration request")
+
 		var user models.User
+		// Pokušaj dekodiranja korisničkog inputa
 		if err := json.NewDecoder(r.Body).Decode(&user); err != nil {
+			// Logujemo grešku pri dekodiranju
+			logrus.WithFields(logrus.Fields{
+				"ip":    r.RemoteAddr,
+				"error": err.Error(),
+			}).Error("Failed to decode user input")
 			http.Error(w, "invalid input", http.StatusBadRequest)
 			return
 		}
 
+		// Pokušaj registracije korisnika
 		if err := s.RegisterUser(user); err != nil {
+			// Logujemo grešku prilikom registracije
+			logrus.WithFields(logrus.Fields{
+				"ip":    r.RemoteAddr,
+				"error": err.Error(),
+			}).Error("Failed to register user")
 			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
 		}
 
+		// Logujemo uspešnu registraciju
+		logrus.WithFields(logrus.Fields{
+			"username": user.Username,
+			"ip":       r.RemoteAddr,
+		}).Info("User successfully registered")
+
+		// Odgovor za uspešnu registraciju
 		w.WriteHeader(http.StatusCreated)
 		w.Write([]byte("user registered"))
 	}
 }
 
 func LoginHandler(s *services.UserService) http.HandlerFunc {
-	log.Printf("U login handleru")
 	return func(w http.ResponseWriter, r *http.Request) {
-		// Dekodiramo podatke iz tela zahteva (postavljeni su user i password)
+		logrus.Infof("Received login request from IP: %s", r.RemoteAddr)
+
 		var userInput models.LoginInput
 		if err := json.NewDecoder(r.Body).Decode(&userInput); err != nil {
+			logrus.WithFields(logrus.Fields{
+				"username": userInput.Username,
+				"ip":       r.RemoteAddr,
+			}).Error("Invalid input data during login attempt")
 			http.Error(w, "invalid input", http.StatusBadRequest)
 			return
 		}
 
-		// Proveravamo da li korisnik postoji i da li je lozinka tačna
 		token, err := s.Login(userInput.Username, userInput.Password)
 		if err != nil {
+			logrus.WithFields(logrus.Fields{
+				"username": userInput.Username,
+				"ip":       r.RemoteAddr,
+			}).Warn("Failed login attempt")
 			http.Error(w, err.Error(), http.StatusUnauthorized)
 			return
 		}
 
-		// Vraćamo token korisniku
+		logrus.WithFields(logrus.Fields{
+			"username": userInput.Username,
+			"ip":       r.RemoteAddr,
+			"time":     r.Header.Get("Date"),
+		}).Info("User successfully logged in")
+
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
 		json.NewEncoder(w).Encode(map[string]string{"token": token})

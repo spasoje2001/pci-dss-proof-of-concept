@@ -2,7 +2,6 @@ package utils
 
 import (
 	"errors"
-	"log"
 	"os"
 	"time"
 
@@ -31,7 +30,6 @@ func GenerateJWT(userID int, username string, role string) (string, error) {
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	log.Println("ovo je secret key ", secretKey)
 	signedToken, err := token.SignedString(secretKey)
 	if err != nil {
 		return "", errors.New("failed to generate token")
