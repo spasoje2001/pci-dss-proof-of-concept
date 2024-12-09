@@ -5,6 +5,7 @@ import (
 	"errors"
 	"go-pci-dss/internal/models"
 	"go-pci-dss/utils"
+	"log"
 	"regexp"
 )
 
@@ -29,16 +30,16 @@ func (s *CardholderService) GetAllCardholders() ([]models.Cardholder, error) {
 		if err := rows.Scan(&c.ID, &c.Name, &c.CardNumber, &c.ExpirationDate); err != nil {
 			return nil, err
 		}
-
-		// Desifrujemo broj kartice
+		err1 := utils.InitializeKey()
+		if err1 != nil {
+			log.Fatalf("Failed to initialize key: %v", err1)
+		}
 		decryptedCardNumber := utils.Decrypt(c.CardNumber)
 
-		// Maskiramo broj kartice
 		if len(decryptedCardNumber) >= 4 {
 			maskedCardNumber := "**** **** **** " + decryptedCardNumber[len(decryptedCardNumber)-4:]
 			c.CardNumber = maskedCardNumber
 		} else {
-			// Ako je broj kartice iz nekog razloga prekratak, samo postavimo placeholder
 			c.CardNumber = "Invalid Card Number"
 		}
 
@@ -48,20 +49,22 @@ func (s *CardholderService) GetAllCardholders() ([]models.Cardholder, error) {
 }
 
 func (s *CardholderService) CreateCardholder(cardholder models.Cardholder) error {
-	// Proveravamo da li su ime i broj kartice prisutni
 	if cardholder.Name == "" || cardholder.CardNumber == "" || cardholder.ExpirationDate == "" || cardholder.CVV == "" {
 		return errors.New("name, card number, expiration date, and CVV are required")
 	}
 
-	encryptedCVV := utils.Encrypt(cardholder.CVV)        // Ovde koristimo šifrovanje
-	encryptedPAN := utils.Encrypt(cardholder.CardNumber) // Ovde koristimo šifrovanje
+	err1 := utils.InitializeKey()
+	if err1 != nil {
+		log.Fatalf("Failed to initialize key: %v", err1)
+	}
 
-	// Simuliramo autorizaciju koristeći šifrovani CVV
+	encryptedCVV := utils.Encrypt(cardholder.CVV)
+	encryptedPAN := utils.Encrypt(cardholder.CardNumber)
+
 	if err := s.AuthorizeCard(cardholder.CardNumber, encryptedCVV); err != nil {
 		return err
 	}
 
-	// Pravimo SQL upit za unos podataka u bazu
 	_, err := s.DB.Exec(
 		"INSERT INTO cardholders (name, card_number, expiration_date) VALUES ($1, $2, $3)",
 		cardholder.Name, encryptedPAN, cardholder.ExpirationDate,
@@ -83,10 +86,8 @@ func (s *CardholderService) AuthorizeCard(cardNumber, encryptedCVV string) error
 		return errors.New("invalid card number: must be exactly 16 digits")
 	}
 
-	// Desifrovanje CVV
 	cvv := utils.Decrypt(encryptedCVV)
 
-	// Provera da li CVV ima 3 ili 4 cifre
 	matchedCVV, err := regexp.MatchString(`^\d{3,4}$`, cvv)
 	if err != nil {
 		return errors.New("error while validating CVV")

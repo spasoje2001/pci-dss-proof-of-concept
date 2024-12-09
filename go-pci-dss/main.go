@@ -24,21 +24,17 @@ func main() {
 			log.Fatalf("Migration failed: %v", err)
 		}*/
 
-	// 2. Kreiranje servisa
 	cardholderService := services.NewCardholderService(db)
 	userService := services.NewUserService(db)
 
-	// 3. Kreiranje router-a
 	r := mux.NewRouter()
 
-	// 5. Definisanje ruta
 	r.Handle("/cardholders", middleware.AdminRoleMiddleware(handlers.GetCardholdersHandler(cardholderService))).Methods("GET")
 	r.HandleFunc("/cardholders", handlers.CreateCardholderHandler(cardholderService)).Methods("POST")
 
 	r.HandleFunc("/users", handlers.RegisterHandler(userService)).Methods("POST")
 	r.HandleFunc("/users/login", handlers.LoginHandler(userService)).Methods("POST")
 
-	// 6. Pokretanje servera
 	port := "8080"
 	log.Printf("Server is running on port %s", port)
 	if err := http.ListenAndServe(":"+port, r); err != nil {

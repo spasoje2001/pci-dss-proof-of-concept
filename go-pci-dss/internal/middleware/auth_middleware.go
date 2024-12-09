@@ -8,14 +8,12 @@ import (
 
 func AdminRoleMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		// Pročitaj JWT token iz Authorization header-a
 		tokenString := r.Header.Get("Authorization")
 		if tokenString == "" {
 			http.Error(w, "Missing token", http.StatusUnauthorized)
 			return
 		}
 
-		// Uklanjamo "Bearer " prefix iz tokena
 		tokenString = strings.TrimPrefix(tokenString, "Bearer ")
 
 		// Validiramo token

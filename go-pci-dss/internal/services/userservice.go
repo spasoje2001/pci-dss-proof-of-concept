@@ -5,7 +5,6 @@ import (
 	"errors"
 	"go-pci-dss/internal/models"
 	"go-pci-dss/utils"
-	"log"
 
 	"golang.org/x/crypto/bcrypt"
 )
@@ -19,11 +18,7 @@ func NewUserService(db *sql.DB) *UserService {
 }
 
 func (s *UserService) RegisterUser(user models.User) error {
-	log.Printf("U servicu")
-	// Validacija ulaza
 
-	log.Printf(user.Username)
-	log.Printf(user.Password)
 	if user.Username == "" || user.Password == "" {
 		return errors.New("username and password are required")
 	}
