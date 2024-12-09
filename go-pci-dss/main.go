@@ -6,6 +6,7 @@ import (
 
 	"go-pci-dss/internal/database"
 	"go-pci-dss/internal/handlers"
+	"go-pci-dss/internal/middleware"
 	"go-pci-dss/internal/services"
 
 	"github.com/gorilla/mux"
@@ -19,19 +20,23 @@ func main() {
 	}
 	defer db.Close()
 	/*
-		if err := database.ExecuteMigration(db, "000001_create_cardholders_table.up.sql"); err != nil {
+		if err := database.ExecuteMigration(db, "000002_create_user_table.up.sql"); err != nil {
 			log.Fatalf("Migration failed: %v", err)
 		}*/
 
 	// 2. Kreiranje servisa
 	cardholderService := services.NewCardholderService(db)
+	userService := services.NewUserService(db)
 
 	// 3. Kreiranje router-a
 	r := mux.NewRouter()
 
 	// 5. Definisanje ruta
-	r.HandleFunc("/cardholders", handlers.GetCardholdersHandler(cardholderService)).Methods("GET")
+	r.Handle("/cardholders", middleware.AdminRoleMiddleware(handlers.GetCardholdersHandler(cardholderService))).Methods("GET")
 	r.HandleFunc("/cardholders", handlers.CreateCardholderHandler(cardholderService)).Methods("POST")
+
+	r.HandleFunc("/users", handlers.RegisterHandler(userService)).Methods("POST")
+	r.HandleFunc("/users/login", handlers.LoginHandler(userService)).Methods("POST")
 
 	// 6. Pokretanje servera
 	port := "8080"
