@@ -19,11 +19,9 @@ func main() {
 		log.Fatalf("Could not connect to the database: %v", err)
 	}
 	defer db.Close()
-	/*
-		if err := database.ExecuteMigration(db, "000002_create_user_table.up.sql"); err != nil {
-			log.Fatalf("Migration failed: %v", err)
-		}*/
-
+	if err := database.ExecuteMigration(db, "000001_create_cardholders_table.up.sql"); err != nil {
+		log.Fatalf("Migration failed: %v", err)
+	}
 	cardholderService := services.NewCardholderService(db)
 	userService := services.NewUserService(db)
 
