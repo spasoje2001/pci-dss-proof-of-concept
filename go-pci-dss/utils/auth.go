@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/dgrijalva/jwt-go"
+	"github.com/pquerna/otp/totp"
 )
 
 type Claims struct {
@@ -56,4 +57,23 @@ func ValidateJWT(tokenString string) (*Claims, error) {
 		return claims, nil
 	}
 	return nil, errors.New("invalid token claims")
+}
+
+// Funkcija za generisanje TOTP sekreta
+func GenerateTOTPSecret() (string, error) {
+	// Generišemo sekert za korisnika
+	secret, err := totp.Generate(totp.GenerateOpts{
+		Issuer:      "go-pci-dss",
+		AccountName: "user@example.com",
+	})
+	if err != nil {
+		return "", err
+	}
+	return secret.Secret(), nil
+}
+
+// Funkcija za verifikaciju TOTP koda
+func ValidateTOTP(secret string, otp string) (bool, error) {
+	valid := totp.Validate(otp, secret)
+	return valid, nil
 }

@@ -22,7 +22,8 @@ func main() {
 	/*
 		if err := database.ExecuteMigration(db, "000001_create_cardholders_table.up.sql"); err != nil {
 			log.Fatalf("Migration failed: %v", err)
-		} */
+		}
+	*/
 	cardholderService := services.NewCardholderService(db)
 	userService := services.NewUserService(db)
 
