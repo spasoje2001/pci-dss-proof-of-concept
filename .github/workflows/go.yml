@@ -34,10 +34,9 @@ jobs:
 
     - name: Lint Code
       uses: golangci/golangci-lint-action@v3
-      with:
-        version: latest
-        args: "--timeout 5m"
-      working-directory: go-pci-dss
+      run: |
+        cd ./go-pci-dss
+        golangci-lint run --timeout 5m
 
     #- name: Security Check
     #  run: go install github.com/securego/gosec/v2/cmd/gosec@latest && gosec ./...
