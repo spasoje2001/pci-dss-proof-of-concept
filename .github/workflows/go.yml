@@ -42,15 +42,15 @@ jobs:
     #  run: golangci-lint run --timeout 5m
     #  working-directory: ./go-pci-dss
 
-    - name: Security Check
-      run: |
-        go install github.com/securego/gosec/v2/cmd/gosec@latest
-        gosec ./...  
-      working-directory: ./go-pci-dss  # (ako je potrebno za tvoj projekat)
-
-
-    #- name: Check Code Coverage
+    #- name: Security Check
     #  run: |
-    #    go test -coverprofile=coverage.out ./...
-    #    go tool cover -func=coverage.out
+    #    go install github.com/securego/gosec/v2/cmd/gosec@latest
+    #    gosec ./...  
+    #  working-directory: ./go-pci-dss  # (ako je potrebno za tvoj projekat)
+
+
+    - name: Check Code Coverage
+      run: |
+        go test -coverprofile=coverage.out ./...
+        go tool cover -func=coverage.out
 
