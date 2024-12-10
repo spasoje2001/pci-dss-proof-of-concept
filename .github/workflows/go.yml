@@ -32,11 +32,12 @@ jobs:
     #- name: Test
     #  run: go test -v ./...
 
-    #- name: Lint Code
-    #  uses: golangci/golangci-lint-action@v3
-    #  with:
-    #    version: latest
-    #    args: "--timeout 5m"
+    - name: Lint Code
+      uses: golangci/golangci-lint-action@v3
+      with:
+        version: latest
+        args: "--timeout 5m"
+      working-directory: go-pci-dss
 
     #- name: Security Check
     #  run: go install github.com/securego/gosec/v2/cmd/gosec@latest && gosec ./...
