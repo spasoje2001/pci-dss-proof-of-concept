@@ -29,8 +29,8 @@ jobs:
       run: go build -v ./...
       working-directory: ./go-pci-dss
 
-    #- name: Test
-    #  run: go test -v ./...
+    - name: Test
+      run: go test -v ./...
 
     #- name: Install golangci-lint
     #  run: |
@@ -49,9 +49,9 @@ jobs:
     #  working-directory: ./go-pci-dss  # (ako je potrebno za tvoj projekat)
 
 
-    - name: Check Code Coverage
-      run: |
-        go test -coverprofile=coverage.out ./...
-        go tool cover -func=coverage.out
-      working-directory: ./go-pci-dss
+    #- name: Check Code Coverage
+    #  run: |
+    #    go test -coverprofile=coverage.out ./...
+    #    go tool cover -func=coverage.out
+    #  working-directory: ./go-pci-dss
 
