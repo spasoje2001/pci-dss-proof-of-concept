@@ -45,7 +45,7 @@ jobs:
     - name: Security Check
       run: |
         go install github.com/securego/gosec/v2/cmd/gosec@latest
-        gosec -v ./...  
+        gosec ./...  
       working-directory: ./go-pci-dss  # (ako je potrebno za tvoj projekat)
 
 
