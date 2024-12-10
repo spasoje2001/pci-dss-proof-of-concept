@@ -7,6 +7,8 @@ import (
 	"go-pci-dss/internal/models"
 	"go-pci-dss/internal/services"
 
+	"github.com/skip2/go-qrcode"
+
 	"github.com/sirupsen/logrus"
 )
 
@@ -32,7 +34,8 @@ func RegisterHandler(s *services.UserService) http.HandlerFunc {
 		}
 
 		// Pokušaj registracije korisnika
-		if err := s.RegisterUser(user); err != nil {
+		uri, err := s.RegisterUser(user)
+		if err != nil {
 			// Logujemo grešku prilikom registracije
 			logrus.WithFields(logrus.Fields{
 				"ip":    r.RemoteAddr,
@@ -49,8 +52,26 @@ func RegisterHandler(s *services.UserService) http.HandlerFunc {
 		}).Info("User successfully registered")
 
 		// Odgovor za uspešnu registraciju
+		/*
+			if uri, err := s.RegisterUser(user); err != nil {
+				http.Error(w, err.Error(), http.StatusBadRequest)
+
+		*/
+
+		qrCode, err := qrcode.Encode(uri, qrcode.Medium, 256) // Generišemo QR kod sa URI-jem
+		if err != nil {
+			http.Error(w, "Failed to generate QR code", http.StatusInternalServerError)
+			return
+		}
+
+		// Postavljanje odgovora sa QR kodom
+		w.Header().Set("Content-Type", "image/png")
 		w.WriteHeader(http.StatusCreated)
-		w.Write([]byte("user registered"))
+		w.Write(qrCode) // Vraćamo QR kod kao sliku u odgovoru
+		/*
+			w.WriteHeader(http.StatusCreated)
+			w.Write([]byte("user registered"))
+		*/
 	}
 }
 
@@ -68,7 +89,7 @@ func LoginHandler(s *services.UserService) http.HandlerFunc {
 			return
 		}
 
-		token, err := s.Login(userInput.Username, userInput.Password)
+		token, err := s.Login(userInput.Username, userInput.Password, userInput.TOTPSecret)
 		if err != nil {
 			logrus.WithFields(logrus.Fields{
 				"username": userInput.Username,

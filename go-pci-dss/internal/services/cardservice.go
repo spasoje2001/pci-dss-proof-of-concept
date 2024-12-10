@@ -6,6 +6,7 @@ import (
 	"go-pci-dss/internal/models"
 	"go-pci-dss/utils"
 	"log"
+	"os"
 	"regexp"
 )
 
@@ -18,7 +19,16 @@ func NewCardholderService(db *sql.DB) *CardholderService {
 }
 
 func (s *CardholderService) GetAllCardholders() ([]models.Cardholder, error) {
-	rows, err := s.DB.Query("SELECT id, name, card_number, expiration_date FROM cardholders")
+
+	encryptionKey := os.Getenv("ENCRYPTION_KEY")
+
+	rows, err := s.DB.Query(
+		`SELECT id, name, 
+			pgp_sym_decrypt(card_number::bytea, $1) AS card_number, 
+			expiration_date 
+		 FROM cardholders`, encryptionKey,
+	)
+
 	if err != nil {
 		return nil, err
 	}
@@ -65,9 +75,12 @@ func (s *CardholderService) CreateCardholder(cardholder models.Cardholder) error
 		return err
 	}
 
+	encryptionKey := os.Getenv("ENCRYPTION_KEY")
+
 	_, err := s.DB.Exec(
-		"INSERT INTO cardholders (name, card_number, expiration_date) VALUES ($1, $2, $3)",
-		cardholder.Name, encryptedPAN, cardholder.ExpirationDate,
+		`INSERT INTO cardholders (name, card_number, expiration_date) 
+		 VALUES ($1, pgp_sym_encrypt($2, $3), $4)`,
+		cardholder.Name, encryptedPAN, encryptionKey, cardholder.ExpirationDate,
 	)
 	if err != nil {
 		return err
