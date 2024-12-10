@@ -1,0 +1,51 @@
+time="2024-12-09T23:58:48+01:00" level=info msg="Received login request from IP: [::1]:57806"
+time="2024-12-09T23:58:48+01:00" level=info msg="User successfully logged in" fields.time= ip="[::1]:57806" username=Admin
+time="2024-12-09T23:59:32+01:00" level=info msg="User attempting to fetch cardholders" ip="[::1]:57806" role=admin username=Admin
+time="2024-12-09T23:59:32+01:00" level=info msg="Successfully fetched cardholders" ip="[::1]:57806" num_cards=5 username=Admin
+time="2024-12-10T00:00:49+01:00" level=info msg="Received login request from IP: [::1]:57806"
+time="2024-12-10T00:00:49+01:00" level=info msg="User successfully logged in" fields.time= ip="[::1]:57806" username=User
+time="2024-12-10T00:01:52+01:00" level=info msg="User attempting to add a card" ip="[::1]:57806" role=user username=User
+time="2024-12-10T00:01:52+01:00" level=info msg="Successfully added a card" card="**** **** **** 8888" ip="[::1]:57806" username=User
+time="2024-12-10T00:08:37+01:00" level=info msg="Received login request from IP: [::1]:57806"
+time="2024-12-10T00:08:37+01:00" level=info msg="User successfully logged in" fields.time= ip="[::1]:57806" username=Admin
+time="2024-12-10T00:09:06+01:00" level=info msg="Received login request from IP: [::1]:57806"
+time="2024-12-10T00:09:06+01:00" level=warning msg="Failed login attempt" ip="[::1]:57806" username=Admin
+time="2024-12-10T00:16:54+01:00" level=info msg="Received login request from IP: [::1]:57938"
+time="2024-12-10T00:16:54+01:00" level=warning msg="Failed login attempt" ip="[::1]:57938" username=Admin
+time="2024-12-10T00:17:09+01:00" level=info msg="Received login request from IP: [::1]:57938"
+time="2024-12-10T00:17:09+01:00" level=info msg="User successfully logged in" fields.time= ip="[::1]:57938" username=Admin
+time="2024-12-10T00:17:27+01:00" level=error msg="Unauthorized request - Missing token" endpoint=/cardholders ip="[::1]:57938"
+time="2024-12-10T00:17:45+01:00" level=warning msg="Forbidden: User does not have admin role" endpoint=/cardholders ip="[::1]:57938" user=User
+time="2024-12-10T00:18:13+01:00" level=info msg="Admin access granted" endpoint=/cardholders ip="[::1]:57938" user=Admin
+time="2024-12-10T00:18:13+01:00" level=info msg="User attempting to fetch cardholders" ip="[::1]:57938" role=admin username=Admin
+time="2024-12-10T00:18:13+01:00" level=info msg="Successfully fetched cardholders" ip="[::1]:57938" num_cards=6 username=Admin
+time="2024-12-10T00:18:21+01:00" level=error msg="User attempted unauthorized access or action - Invalid token" endpoint=/cardholders error="invalid token" ip="[::1]:57938"
+time="2024-12-10T00:23:28+01:00" level=info msg="Received registration request" endpoint=/users ip="[::1]:57973" method=POST
+time="2024-12-10T00:23:28+01:00" level=info msg="User successfully registered" ip="[::1]:57973" username=Zela
+time="2024-12-10T01:17:04+01:00" level=info msg="Received login request from IP: [::1]:58387"
+time="2024-12-10T01:17:04+01:00" level=info msg="User successfully logged in" fields.time= ip="[::1]:58387" username=Zela
+time="2024-12-10T01:21:21+01:00" level=warning msg="Forbidden: User does not have admin role" endpoint=/cardholders ip="[::1]:58412" user=Zela
+time="2024-12-10T01:24:11+01:00" level=warning msg="Forbidden: User does not have admin role" endpoint=/cardholders ip="[::1]:58458" user=Zela
+time="2024-12-10T01:31:00+01:00" level=warning msg="Forbidden: User does not have admin role" endpoint=/cardholders ip="[::1]:58577" user=Zela
+time="2024-12-10T18:02:33+01:00" level=info msg="Received registration request" endpoint=/users ip="[::1]:61053" method=POST
+time="2024-12-10T18:02:34+01:00" level=info msg="User successfully registered" ip="[::1]:61053" username=Zela
+time="2024-12-10T18:03:53+01:00" level=info msg="Received login request from IP: [::1]:61053"
+time="2024-12-10T18:03:53+01:00" level=info msg="User successfully logged in" fields.time= ip="[::1]:61053" username=Zela
+time="2024-12-10T18:04:22+01:00" level=info msg="Admin access granted" endpoint=/cardholders ip="[::1]:61053" user=Zela
+time="2024-12-10T18:04:22+01:00" level=info msg="User attempting to fetch cardholders" ip="[::1]:61053" role=admin username=Zela
+time="2024-12-10T18:04:22+01:00" level=info msg="Successfully fetched cardholders" ip="[::1]:61053" num_cards=0 username=Zela
+time="2024-12-10T18:06:47+01:00" level=info msg="Received registration request" endpoint=/users ip="[::1]:61053" method=POST
+time="2024-12-10T18:06:47+01:00" level=info msg="User successfully registered" ip="[::1]:61053" username=Spale
+time="2024-12-10T18:08:22+01:00" level=info msg="Received registration request" endpoint=/users ip="[::1]:61053" method=POST
+time="2024-12-10T18:08:22+01:00" level=error msg="Failed to register user" error="pq: duplicate key value violates unique constraint \"users_username_key\"" ip="[::1]:61053"
+time="2024-12-10T18:08:47+01:00" level=info msg="Received login request from IP: [::1]:61053"
+time="2024-12-10T18:08:48+01:00" level=info msg="User successfully logged in" fields.time= ip="[::1]:61053" username=Spale
+time="2024-12-10T18:10:06+01:00" level=info msg="User access granted" endpoint=/cardholders ip="[::1]:61053" user=Spale
+time="2024-12-10T18:10:06+01:00" level=info msg="User attempting to add a card" ip="[::1]:61053" role=user username=Spale
+time="2024-12-10T18:10:06+01:00" level=error msg="Failed to create cardholder" error="name, card number, expiration date, and CVV are required" ip="[::1]:61053" username=Spale
+time="2024-12-10T18:10:20+01:00" level=info msg="User access granted" endpoint=/cardholders ip="[::1]:61053" user=Spale
+time="2024-12-10T18:10:20+01:00" level=info msg="User attempting to add a card" ip="[::1]:61053" role=user username=Spale
+time="2024-12-10T18:10:20+01:00" level=info msg="Successfully added a card" card="**** **** **** 4444" ip="[::1]:61053" username=Spale
+time="2024-12-10T18:10:40+01:00" level=info msg="Admin access granted" endpoint=/cardholders ip="[::1]:61053" user=Zela
+time="2024-12-10T18:10:40+01:00" level=info msg="User attempting to fetch cardholders" ip="[::1]:61053" role=admin username=Zela
+time="2024-12-10T18:10:40+01:00" level=info msg="Successfully fetched cardholders" ip="[::1]:61053" num_cards=1 username=Zela
