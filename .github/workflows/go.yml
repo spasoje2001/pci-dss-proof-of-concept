@@ -45,7 +45,7 @@ jobs:
     - name: Security Check
       run: |
         go install github.com/securego/gosec/v2/cmd/gosec@latest
-        gosec -v ./...  # Flag '-v' daje verbose izlaz, što može pomoći u debuggovanju
+        gosec -v ./...  
       working-directory: ./go-pci-dss  # (ako je potrebno za tvoj projekat)
 
 
