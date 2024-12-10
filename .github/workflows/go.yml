@@ -33,7 +33,6 @@ jobs:
     #  run: go test -v ./...
 
     - name: Lint Code
-      uses: golangci/golangci-lint-action@v3
       run: |
         cd ./go-pci-dss
         golangci-lint run --timeout 5m
