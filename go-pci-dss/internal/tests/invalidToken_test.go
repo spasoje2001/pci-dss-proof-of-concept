@@ -4,6 +4,7 @@ import (
 	"go-pci-dss/internal/middleware"
 	"net/http"
 	"net/http/httptest"
+	"strings"
 	"testing"
 )
 
@@ -25,9 +26,13 @@ func TestAccessWithInvalidToken(t *testing.T) {
 	if rr.Code != http.StatusUnauthorized {
 		t.Errorf("expected status 401, got %v", rr.Code)
 	}
+	actual := strings.TrimSpace(rr.Body.String())
 
 	expected := "Invalid token"
-	if rr.Body.String() != expected {
-		t.Errorf("expected response body %v, got %v", expected, rr.Body.String())
+
+	if actual != expected {
+		t.Errorf("expected response body '%v', got '%v'", expected, actual)
+	} else {
+		t.Log("Test passed: response body matches expected.")
 	}
 }

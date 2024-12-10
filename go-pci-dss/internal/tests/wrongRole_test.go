@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"os"
+	"strings"
 	"testing"
 )
 
@@ -28,9 +29,12 @@ func TestAccessWithValidTokenButWrongRole(t *testing.T) {
 	if rr.Code != http.StatusForbidden {
 		t.Errorf("expected status 403, got %v", rr.Code)
 	}
+	actual := strings.TrimSpace(rr.Body.String())
 
 	expected := "Forbidden"
-	if rr.Body.String() != expected {
-		t.Errorf("expected response body %v, got %v", expected, rr.Body.String())
+	if actual != expected {
+		t.Errorf("expected response body '%v', got '%v'", expected, actual)
+	} else {
+		t.Log("Test passed: response body matches expected.")
 	}
 }
