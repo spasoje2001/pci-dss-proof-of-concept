@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
+	"log"
 	"net/http"
 	"strings"
 
@@ -18,6 +19,7 @@ type contextKey string
 const userContextKey contextKey = "user"*/
 
 func GetCardholdersHandler(service *services.CardholderService) http.HandlerFunc {
+	log.Println("test , get cards")
 	return func(w http.ResponseWriter, r *http.Request) {
 		tokenString := strings.TrimPrefix(r.Header.Get("Authorization"), "Bearer ")
 		if tokenString == "" {

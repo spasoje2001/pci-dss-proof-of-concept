@@ -27,7 +27,6 @@ func AdminRoleMiddleware(next http.Handler) http.Handler {
 
 		tokenString = strings.TrimPrefix(tokenString, "Bearer ")
 
-		// Validiramo token
 		claims, err := utils.ValidateJWT(tokenString)
 		if err != nil {
 			logrus.WithFields(logrus.Fields{
