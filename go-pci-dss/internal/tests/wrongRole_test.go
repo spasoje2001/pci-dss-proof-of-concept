@@ -2,6 +2,7 @@ package tests
 
 import (
 	"go-pci-dss/internal/middleware"
+	"go-pci-dss/utils"
 	"net/http"
 	"net/http/httptest"
 	"os"
@@ -11,12 +12,16 @@ import (
 
 func TestAccessWithValidTokenButWrongRole(t *testing.T) {
 	os.Setenv("JWT_SECRET_KEY", "yourSuperSecretJWTKey")
-	validToken := "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjo5LCJ1c2VybmFtZSI6IlplbGEiLCJyb2xlIjoidXNlciIsImV4cCI6MTczMzg3NjIyNCwiaXNzIjoiZ28tcGNpLWRzcyJ9.cT9QOlCvCc4NJM_MNLkH8Dn0eSViAd0EX9P9yluLOGc"
+	token, err := utils.GenerateJWT(9, "Zela", "user")
+	if err != nil {
+		t.Fatalf("Failed to generate token: %v", err)
+	}
+
 	req, err := http.NewRequest("GET", "/cardholders", nil)
 	if err != nil {
 		t.Fatal(err)
 	}
-	req.Header.Set("Authorization", "Bearer "+validToken)
+	req.Header.Set("Authorization", "Bearer "+token)
 
 	rr := httptest.NewRecorder()
 
