@@ -64,14 +64,17 @@ func RegisterHandler(s *services.UserService) http.HandlerFunc {
 			return
 		}
 
-		// Postavljanje odgovora sa QR kodom
 		w.Header().Set("Content-Type", "image/png")
 		w.WriteHeader(http.StatusCreated)
-		w.Write(qrCode) // Vraćamo QR kod kao sliku u odgovoru
-		/*
-			w.WriteHeader(http.StatusCreated)
-			w.Write([]byte("user registered"))
-		*/
+		if _, err := w.Write(qrCode); err != nil {
+			logrus.WithFields(logrus.Fields{
+				"username": user.Username,
+				"ip":       r.RemoteAddr,
+				"error":    err.Error(),
+			}).Error("Failed to write QR code to response")
+			http.Error(w, "Failed to write response", http.StatusInternalServerError)
+			return
+		}
 	}
 }
 
@@ -107,6 +110,14 @@ func LoginHandler(s *services.UserService) http.HandlerFunc {
 
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
-		json.NewEncoder(w).Encode(map[string]string{"token": token})
+		if err := json.NewEncoder(w).Encode(map[string]string{"token": token}); err != nil {
+			logrus.WithFields(logrus.Fields{
+				"username": userInput.Username,
+				"ip":       r.RemoteAddr,
+				"error":    err.Error(),
+			}).Error("Failed to encode login response")
+			http.Error(w, "Failed to generate response", http.StatusInternalServerError)
+			return
+		}
 	}
 }

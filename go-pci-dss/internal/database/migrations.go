@@ -3,8 +3,8 @@ package database
 import (
 	"database/sql"
 	"fmt"
-	"io/ioutil"
 	"log"
+	"os"
 	"path/filepath"
 )
 
@@ -12,7 +12,7 @@ import (
 func ExecuteMigration(db *sql.DB, migrationName string) error {
 	// Preuzimanje SQL fajla
 	migrationPath := filepath.Join("migrations", migrationName)
-	sqlQuery, err := ioutil.ReadFile(migrationPath)
+	sqlQuery, err := os.ReadFile(migrationPath)
 	if err != nil {
 		return fmt.Errorf("could not read migration file %s: %v", migrationName, err)
 	}

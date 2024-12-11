@@ -62,7 +62,15 @@ func GetCardholdersHandler(service *services.CardholderService) http.HandlerFunc
 		}).Info("Successfully fetched cardholders")
 
 		w.Header().Set("Content-Type", "application/json")
-		json.NewEncoder(w).Encode(cardholders)
+		if err := json.NewEncoder(w).Encode(cardholders); err != nil {
+			logrus.WithFields(logrus.Fields{
+				"username": claims.Username,
+				"ip":       r.RemoteAddr,
+				"error":    err.Error(),
+			}).Error("Failed to encode cardholders to JSON")
+			http.Error(w, "Failed to encode response", http.StatusInternalServerError)
+			return
+		}
 	}
 }
 
