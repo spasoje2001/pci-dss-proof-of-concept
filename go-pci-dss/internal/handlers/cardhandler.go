@@ -133,7 +133,7 @@ func CreateCardholderHandler(service *services.CardholderService) http.HandlerFu
 }
 func maskCardNumber(cardNumber string) string {
 	if len(cardNumber) < 4 {
-		return cardNumber // Ako broj kartice nije duži od 4 cifre, ne maskiramo ga
+		return cardNumber
 	}
-	return "**** **** **** " + cardNumber[len(cardNumber)-4:] // Maskiraj sve osim poslednje četiri cifre
+	return "**** **** **** " + cardNumber[len(cardNumber)-4:]
 }
