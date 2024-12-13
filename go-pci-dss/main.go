@@ -39,15 +39,9 @@ func main() {
 
 	certFile := "server.crt"
 	keyFile := "server.key"
-	port := "8443" // Preporučuje se koristiti port 443 za HTTPS, ali ovde je 8443 za razvojne potrebe
+	port := "8443"
 	log.Printf("Server is running on https://localhost:%s", port)
 	if err := http.ListenAndServeTLS(":"+port, certFile, keyFile, r); err != nil {
 		log.Fatalf("Could not start server: %v", err)
 	}
-	/*
-		port := "8080"
-		log.Printf("Server is running on port %s", port)
-		if err := http.ListenAndServe(":"+port, r); err != nil {
-			log.Fatalf("Could not start server: %v", err)
-		} */
 }
